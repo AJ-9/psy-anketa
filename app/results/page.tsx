@@ -139,6 +139,48 @@ export default function ResultsPage() {
                   fatigue: 'Усталость',
                   irritability: 'Раздражительность',
                 }
+                
+                // Определяем, является ли метрика "положительной" (высокое значение = хорошо)
+                const positiveMetrics = [
+                  'selfEsteem',
+                  'socialSupport',
+                  'copingSkills',
+                  'sleepQuality',
+                  'concentration',
+                ]
+                
+                // Для аппетита норма около 5, отклонения плохо
+                const isPositive = positiveMetrics.includes(key)
+                const isAppetite = key === 'appetite'
+                
+                // Определяем цвет
+                let colorClass = 'bg-gray-500'
+                if (isAppetite) {
+                  // Для аппетита: норма около 5 (зеленый), отклонения (желтый/красный)
+                  const deviation = Math.abs(value - 5)
+                  if (deviation <= 2) {
+                    colorClass = 'bg-green-500'
+                  } else if (deviation <= 4) {
+                    colorClass = 'bg-yellow-500'
+                  } else {
+                    colorClass = 'bg-red-500'
+                  }
+                } else if (isPositive) {
+                  // Для положительных метрик: высокое = хорошо (зеленый)
+                  colorClass = value >= 7
+                    ? 'bg-green-500'
+                    : value >= 4
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
+                } else {
+                  // Для отрицательных метрик: высокое = плохо (красный)
+                  colorClass = value >= 7
+                    ? 'bg-red-500'
+                    : value >= 4
+                    ? 'bg-yellow-500'
+                    : 'bg-green-500'
+                }
+                
                 return (
                   <div key={key} className="bg-gray-50 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
@@ -151,13 +193,7 @@ export default function ResultsPage() {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full ${
-                          value >= 7
-                            ? 'bg-red-500'
-                            : value >= 4
-                            ? 'bg-yellow-500'
-                            : 'bg-green-500'
-                        }`}
+                        className={`h-2 rounded-full ${colorClass}`}
                         style={{ width: `${(value / 10) * 100}%` }}
                       />
                     </div>
