@@ -26,11 +26,3 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-
-      url: databaseUrl || 'file:./prisma/dev.db', // Fallback для локальной разработки
-    },
-  },
-})
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-
