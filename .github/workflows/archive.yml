@@ -1,0 +1,38 @@
+name: Create Archive on Push
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create archive
+        run: |
+          mkdir -p archives
+          timestamp=$(date +%Y%m%d_%H%M%S)
+          tar -czf archives/psy-anketa_${timestamp}.tar.gz \
+            --exclude="node_modules" \
+            --exclude=".next" \
+            --exclude="archives" \
+            --exclude=".git" \
+            --exclude="*.db" \
+            --exclude="*.db-journal" \
+            --exclude=".env*.local" \
+            --exclude="dist" \
+            --exclude="build" \
+            --exclude="coverage" \
+            .
+      
+      - name: Upload archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: project-archive-${{ github.sha }}
+          path: archives/psy-anketa_*.tar.gz
+          retention-days: 30
+

@@ -1,0 +1,10 @@
+{
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.enableCommitSigning": false,
+  "github.gitProtocol": "https",
+  "git.remoteName": "origin",
+  "git.defaultCloneDirectory": "/Users/alikbidzhiev/Documents"
+}
+

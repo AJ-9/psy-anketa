@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model QuestionnaireResponse {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  startedAt     DateTime
+  completedAt   DateTime?
+  
+  // Демография
+  age           String?
+  gender        String?
+  education     String?
+  employment    String?
+  relationshipStatus String?
+  
+  // Ответы (JSON)
+  answers       String   // JSON string of Answer[]
+  
+  // Результаты анализа (JSON)
+  analysis      String?  // JSON string of AnalysisResult
+  
+  // Метаданные
+  patientName   String?
+  patientEmail  String?
+  notes         String?
+  
+  @@index([createdAt])
+  @@index([completedAt])
+}
+
