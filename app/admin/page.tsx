@@ -40,7 +40,18 @@ export default function AdminPage() {
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
         console.error('Failed to fetch responses:', res.status, errorData)
-        alert(`Ошибка при загрузке анкет: ${errorData.error || res.statusText}`)
+        
+        // Показываем более понятное сообщение об ошибке
+        let errorMessage = errorData.error || res.statusText
+        if (errorData.details) {
+          errorMessage += `: ${errorData.details}`
+        }
+        if (errorData.hint) {
+          errorMessage += `\n\nПодсказка: ${errorData.hint}`
+        }
+        
+        alert(`Ошибка при загрузке анкет: ${errorMessage}`)
+        setResponses([]) // Очищаем список при ошибке
         return
       }
       
@@ -49,7 +60,9 @@ export default function AdminPage() {
       setResponses(data.responses || [])
     } catch (error) {
       console.error('Error fetching responses:', error)
-      alert(`Ошибка при загрузке анкет: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`)
+      const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка'
+      alert(`Ошибка при загрузке анкет: ${errorMessage}\n\nВозможно, база данных не настроена. Проверьте настройки в Vercel Dashboard.`)
+      setResponses([]) // Очищаем список при ошибке
     } finally {
       setLoading(false)
     }

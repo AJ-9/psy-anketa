@@ -52,16 +52,30 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Проверяем наличие DATABASE_URL
+    if (!process.env.DATABASE_URL) {
+      console.error('DATABASE_URL is not set')
+      return NextResponse.json(
+        { 
+          error: 'Database not configured', 
+          details: 'DATABASE_URL environment variable is not set. Please configure PostgreSQL database in Vercel Dashboard.',
+          hint: 'Go to Vercel Dashboard → Storage → Create Database → Postgres'
+        },
+        { status: 503 }
+      )
+    }
+
     // Проверяем подключение к БД
     try {
       await prisma.$connect()
     } catch (dbError) {
       console.error('Database connection error:', dbError)
+      const errorMessage = dbError instanceof Error ? dbError.message : 'Unknown database error'
       return NextResponse.json(
         { 
           error: 'Database connection failed', 
-          details: dbError instanceof Error ? dbError.message : 'Unknown database error',
-          hint: process.env.DATABASE_URL ? 'DATABASE_URL is set' : 'DATABASE_URL is not set'
+          details: errorMessage,
+          hint: 'Please check DATABASE_URL in Vercel Environment Variables and ensure PostgreSQL database is created.'
         },
         { status: 503 }
       )
