@@ -1,8 +1,78 @@
 import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import { AnalysisResult } from '@/types/questionnaire'
 
+// Функция для экспорта через html2canvas (поддерживает кириллицу)
+export async function exportToPDFFromElement(elementId: string, patientName?: string) {
+  const element = document.getElementById(elementId)
+  if (!element) {
+    console.error('Element not found for PDF export')
+    return
+  }
+
+  try {
+    // Показываем элемент перед рендерингом
+    const originalDisplay = element.style.display
+    element.style.display = 'block'
+    element.style.position = 'absolute'
+    element.style.left = '-9999px'
+    element.style.top = '0'
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+    })
+
+    // Восстанавливаем оригинальное состояние
+    element.style.display = originalDisplay
+    element.style.position = ''
+    element.style.left = ''
+    element.style.top = ''
+
+    const imgData = canvas.toDataURL('image/png', 1.0)
+    const pdf = new jsPDF('p', 'mm', 'a4')
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfHeight = pdf.internal.pageSize.getHeight()
+    
+    const imgWidth = canvas.width
+    const imgHeight = canvas.height
+    const ratio = pdfWidth / imgWidth
+    const scaledHeight = imgHeight * ratio
+    
+    let heightLeft = scaledHeight
+    let position = 0
+
+    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, scaledHeight)
+    heightLeft -= pdfHeight
+
+    while (heightLeft > 0) {
+      position = heightLeft - scaledHeight
+      pdf.addPage()
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, scaledHeight)
+      heightLeft -= pdfHeight
+    }
+    
+    const fileName = patientName 
+      ? `psy-anketa-${patientName.replace(/\s+/g, '-')}-${Date.now()}.pdf`
+      : `psy-anketa-${Date.now()}.pdf`
+    pdf.save(fileName)
+  } catch (error) {
+    console.error('Error exporting PDF:', error)
+    alert('Ошибка при экспорте PDF. Попробуйте еще раз.')
+  }
+}
+
+// Старая функция для совместимости (использует Unicode-совместимый подход)
 export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
-  const doc = new jsPDF()
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  })
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   let yPos = 20

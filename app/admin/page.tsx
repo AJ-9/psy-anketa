@@ -22,6 +22,7 @@ export default function AdminPage() {
   const router = useRouter()
   const [responses, setResponses] = useState<Response[]>([])
   const [loading, setLoading] = useState(true)
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null)
   const [filter, setFilter] = useState<'all' | 'completed' | 'incomplete'>('all')
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(null)
 
@@ -41,8 +42,47 @@ export default function AdminPage() {
   }, [filter])
 
   useEffect(() => {
-    fetchResponses()
-  }, [fetchResponses])
+    // Проверяем аутентификацию
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/check')
+        const data = await res.json()
+        if (data.authenticated) {
+          setAuthenticated(true)
+          fetchResponses()
+        } else {
+          setAuthenticated(false)
+          router.push('/admin/login')
+        }
+      } catch (error) {
+        console.error('Auth check error:', error)
+        setAuthenticated(false)
+        router.push('/admin/login')
+      }
+    }
+    checkAuth()
+  }, [router, fetchResponses])
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/admin/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  if (authenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Проверка доступа...</p>
+      </div>
+    )
+  }
+
+  if (authenticated === false) {
+    return null
+  }
 
   const handleExportPDF = (response: Response) => {
     if (response.analysis) {
@@ -89,7 +129,18 @@ export default function AdminPage() {
               onClick={() => router.push('/')}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
             >
-              На главную
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-all"
+              >
+                Выйти
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition-all"
+              >
+                На главную
+              </button>
             </button>
           </div>
 

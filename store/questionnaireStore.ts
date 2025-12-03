@@ -68,6 +68,7 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
     // Сохраняем в БД
     try {
       const demographics = {
+        name: String(state.answers.get('demo-name')?.value || ''),
         age: String(state.answers.get('demo-age')?.value || ''),
         gender: String(state.answers.get('demo-gender')?.value || ''),
         education: String(state.answers.get('demo-education')?.value || ''),

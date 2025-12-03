@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useQuestionnaireStore } from '@/store/questionnaireStore'
-import { exportToPDF } from '@/lib/pdfExport'
+import { exportToPDF, exportToPDFFromElement } from '@/lib/pdfExport'
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -52,7 +52,9 @@ export default function ResultsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6"
+          id="results-content"
         >
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Результаты анализа
@@ -250,7 +252,20 @@ export default function ResultsPage() {
           {/* Actions */}
           <div className="flex gap-4">
             <button
-              onClick={() => exportToPDF(analysis)}
+              onClick={async () => {
+                try {
+                  const resultsContent = document.getElementById('results-content')
+                  if (resultsContent) {
+                    await exportToPDFFromElement('results-content')
+                  } else {
+                    // Fallback к текстовому экспорту
+                    exportToPDF(analysis)
+                  }
+                } catch (error) {
+                  console.error('PDF export error:', error)
+                  alert('Ошибка при экспорте PDF. Попробуйте еще раз.')
+                }
+              }}
               className="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-all"
             >
               📄 Экспорт в PDF

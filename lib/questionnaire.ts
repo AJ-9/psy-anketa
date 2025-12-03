@@ -4,12 +4,20 @@ import { Question, QuestionCategory, Answer, AnalysisResult, PersonalityType, Ps
 export const questionnaireQuestions: Question[] = [
   // Демография
   {
+    id: 'demo-name',
+    type: 'text',
+    text: 'Ваше ФИО (Фамилия Имя Отчество)?',
+    required: true,
+    category: 'demographics',
+    order: 1,
+  },
+  {
     id: 'demo-age',
     type: 'text',
     text: 'Ваш возраст?',
     required: true,
     category: 'demographics',
-    order: 1,
+    order: 2,
   },
   {
     id: 'demo-gender',
@@ -22,7 +30,7 @@ export const questionnaireQuestions: Question[] = [
       { id: 'female', text: 'Женский', value: 'female' },
       { id: 'other', text: 'Другой', value: 'other' },
     ],
-    order: 2,
+    order: 3,
   },
   {
     id: 'demo-education',
@@ -37,7 +45,7 @@ export const questionnaireQuestions: Question[] = [
       { id: 'master', text: 'Высшее (магистратура)', value: 'master' },
       { id: 'phd', text: 'Ученая степень', value: 'phd' },
     ],
-    order: 3,
+    order: 4,
   },
   {
     id: 'demo-employment',
@@ -52,7 +60,7 @@ export const questionnaireQuestions: Question[] = [
       { id: 'retired', text: 'На пенсии', value: 'retired' },
       { id: 'freelance', text: 'Фриланс/самозанятый', value: 'freelance' },
     ],
-    order: 4,
+    order: 5,
   },
   {
     id: 'demo-relationship-status',
