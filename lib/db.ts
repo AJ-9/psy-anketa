@@ -5,7 +5,7 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 // Используем DATABASE_URL из переменных окружения или дефолтное значение для локальной разработки
-const databaseUrl = process.env.DATABASE_URL || 'file:./dev.db'
+const databaseUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   datasources: {
