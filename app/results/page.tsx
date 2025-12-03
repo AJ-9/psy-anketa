@@ -149,36 +149,39 @@ export default function ResultsPage() {
                   'concentration',
                 ]
                 
-                // Для аппетита норма около 5, отклонения плохо
+                // Для аппетита: значение уже нормализовано (7 = хорошо, 5 = средне, 3 = плохо)
                 const isPositive = positiveMetrics.includes(key)
                 const isAppetite = key === 'appetite'
                 
                 // Определяем цвет
                 let colorClass = 'bg-gray-500'
                 if (isAppetite) {
-                  // Для аппетита: норма около 5 (зеленый), отклонения (желтый/красный)
-                  const deviation = Math.abs(value - 5)
-                  if (deviation <= 2) {
+                  // Для аппетита: 7 = хорошо (зеленый), 5 = средне (желтый), 3 = плохо (красный)
+                  if (value >= 7) {
                     colorClass = 'bg-green-500'
-                  } else if (deviation <= 4) {
+                  } else if (value >= 5) {
                     colorClass = 'bg-yellow-500'
                   } else {
                     colorClass = 'bg-red-500'
                   }
                 } else if (isPositive) {
-                  // Для положительных метрик: высокое = хорошо (зеленый)
-                  colorClass = value >= 7
-                    ? 'bg-green-500'
-                    : value >= 4
-                    ? 'bg-yellow-500'
-                    : 'bg-red-500'
+                  // Для положительных метрик: высокое = хорошо (зеленый), низкое = плохо (красный)
+                  if (value >= 7) {
+                    colorClass = 'bg-green-500'
+                  } else if (value >= 4) {
+                    colorClass = 'bg-yellow-500'
+                  } else {
+                    colorClass = 'bg-red-500' // Низкие значения положительных метрик = плохо
+                  }
                 } else {
-                  // Для отрицательных метрик: высокое = плохо (красный)
-                  colorClass = value >= 7
-                    ? 'bg-red-500'
-                    : value >= 4
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
+                  // Для отрицательных метрик: высокое = плохо (красный), низкое = хорошо (зеленый)
+                  if (value >= 7) {
+                    colorClass = 'bg-red-500'
+                  } else if (value >= 4) {
+                    colorClass = 'bg-yellow-500'
+                  } else {
+                    colorClass = 'bg-green-500'
+                  }
                 }
                 
                 return (
