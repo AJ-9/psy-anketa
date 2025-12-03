@@ -3,7 +3,17 @@
 ## Проблема
 Ошибка "Failed to fetch responses" означает, что база данных не настроена на Vercel.
 
-## ✅ Решение за 3 шага:
+## ⚠️ Если не можете зайти в Vercel Dashboard
+
+Используйте **альтернативный способ** - внешний PostgreSQL:
+- **Supabase** (бесплатно): https://supabase.com
+- **Neon** (бесплатно): https://neon.tech
+
+Подробная инструкция: см. файл `ALTERNATIVE_DB_SETUP.md`
+
+---
+
+## ✅ Решение за 3 шага (через Vercel Dashboard):
 
 ### Шаг 1: Создайте PostgreSQL базу данных (2 минуты)
 
