@@ -2,7 +2,9 @@
 
 Приложение для сбора анамнеза, определения типа личности, выявления истинного запроса пациента и генерации рекомендаций на основе психологических данных.
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/AJ-9/psy-anketa)
+[![Vercel](https://img.shields.io/badge/Vercel-Deploy-black)](https://vercel.com)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://psy-anketa.vercel.app)
 
 ## Возможности
 
