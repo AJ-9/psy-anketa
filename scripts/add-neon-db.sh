@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Скрипт для добавления DATABASE_URL в Vercel
+# Скрипт для добавления Neon Connection String в Vercel
 
+set -e
+
+# Connection String из Neon (без psql и кавычек)
 DATABASE_URL="postgresql://neondb_owner:npg_3j1mavEnBlbV@ep-bitter-wildflower-a4lgzki8-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
-echo "🔧 Добавление DATABASE_URL в Vercel..."
+echo "🔧 Добавление Neon DATABASE_URL в Vercel"
 echo ""
 
 # Проверяем наличие Vercel CLI
@@ -20,12 +23,14 @@ if ! command -v vercel &> /dev/null; then
 fi
 
 # Проверяем авторизацию в Vercel
+echo "🔍 Проверяем авторизацию в Vercel..."
 if ! $VERCEL_CMD whoami &> /dev/null; then
     echo "⚠️  Вы не авторизованы в Vercel"
     echo "   Выполняем: $VERCEL_CMD login"
     $VERCEL_CMD login
 fi
 
+echo ""
 echo "📝 Добавляем DATABASE_URL для production..."
 echo "$DATABASE_URL" | $VERCEL_CMD env add DATABASE_URL production
 
