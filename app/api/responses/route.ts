@@ -52,6 +52,21 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Проверяем подключение к БД
+    try {
+      await prisma.$connect()
+    } catch (dbError) {
+      console.error('Database connection error:', dbError)
+      return NextResponse.json(
+        { 
+          error: 'Database connection failed', 
+          details: dbError instanceof Error ? dbError.message : 'Unknown database error',
+          hint: process.env.DATABASE_URL ? 'DATABASE_URL is set' : 'DATABASE_URL is not set'
+        },
+        { status: 503 }
+      )
+    }
+
     const searchParams = request.nextUrl.searchParams
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
@@ -78,13 +93,26 @@ export async function GET(request: NextRequest) {
 
     console.log(`Found ${responses.length} responses (total: ${total})`)
 
-    const parsedResponses = responses.map((r) => ({
-      ...r,
-      answers: JSON.parse(r.answers),
-      analysis: r.analysis ? JSON.parse(r.analysis) : null,
-      psychologistResult: r.psychologistResult ? JSON.parse(r.psychologistResult) : null,
-      patientResult: r.patientResult ? JSON.parse(r.patientResult) : null,
-    }))
+    const parsedResponses = responses.map((r) => {
+      try {
+        return {
+          ...r,
+          answers: JSON.parse(r.answers),
+          analysis: r.analysis ? JSON.parse(r.analysis) : null,
+          psychologistResult: r.psychologistResult ? JSON.parse(r.psychologistResult) : null,
+          patientResult: r.patientResult ? JSON.parse(r.patientResult) : null,
+        }
+      } catch (parseError) {
+        console.error('Error parsing response:', r.id, parseError)
+        return {
+          ...r,
+          answers: [],
+          analysis: null,
+          psychologistResult: null,
+          patientResult: null,
+        }
+      }
+    })
 
     return NextResponse.json({
       responses: parsedResponses,
@@ -95,11 +123,24 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching responses:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
     console.error('Error details:', errorMessage)
+    console.error('Error stack:', errorStack)
+    
     return NextResponse.json(
-      { error: 'Failed to fetch responses', details: errorMessage },
+      { 
+        error: 'Failed to fetch responses', 
+        details: errorMessage,
+        // Не отправляем stack в продакшене
+        ...(process.env.NODE_ENV === 'development' && { stack: errorStack })
+      },
       { status: 500 }
     )
+  } finally {
+    // Закрываем соединение только в development для отладки
+    if (process.env.NODE_ENV === 'development') {
+      await prisma.$disconnect().catch(() => {})
+    }
   }
 }
 

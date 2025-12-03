@@ -4,12 +4,14 @@
   "description": "Онлайн справочник-анкетирование для психолога",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "DATABASE_URL=\"file:./prisma/dev.db\" next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "archive": "node scripts/create-archive.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
     "next": "^14.0.0",
