@@ -125,23 +125,20 @@ export default function AdminPage() {
                 Управление анкетами и результатами пациентов
               </p>
             </div>
-            <button
-              onClick={() => router.push('/')}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-            >
+            <div className="flex gap-2">
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-all"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
               >
                 Выйти
               </button>
               <button
                 onClick={() => router.push('/')}
-                className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition-all"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
               >
                 На главную
               </button>
-            </button>
+            </div>
           </div>
 
           {/* Фильтры */}
