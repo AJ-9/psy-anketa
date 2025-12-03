@@ -28,6 +28,11 @@ export interface Question {
   step?: number
   // Направление шкалы для цветовой кодировки
   scaleDirection?: 'positive' | 'negative' | 'neutral' // positive = высокое значение хорошо (зеленый), negative = высокое значение плохо (красный), neutral = среднее значение оптимально
+  // Условное отображение вопроса
+  conditional?: {
+    questionId: string // ID вопроса, от которого зависит показ
+    values: (string | number | boolean)[] // Значения, при которых вопрос показывается
+  }
   // Категория вопроса (для группировки)
   category: QuestionCategory
   // Порядок отображения

@@ -341,15 +341,36 @@ export const questionnaireQuestions: Question[] = [
   {
     id: 'relationships-partner',
     type: 'scale',
-    text: 'Если вы в отношениях, как вы оцениваете качество отношений с партнером?',
-    description: 'Если не в отношениях, выберите 0',
+    text: 'Как вы оцениваете качество отношений с партнером?',
+    description: 'Оцените качество ваших романтических отношений с партнером.',
     required: true,
     category: 'relationships',
     min: 0,
     max: 10,
     step: 1,
     scaleDirection: 'positive', // Высокое значение = хорошо
+    conditional: {
+      questionId: 'demo-relationship-status',
+      values: ['dating', 'married'], // Показывать только если в отношениях или в браке
+    },
     order: 51,
+  },
+  {
+    id: 'relationships-single-satisfaction',
+    type: 'scale',
+    text: 'Как вы оцениваете свое удовлетворение от жизни без романтических отношений?',
+    description: 'Оцените, насколько вы удовлетворены своей жизнью в данный момент, не имея романтических отношений.',
+    required: true,
+    category: 'relationships',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
+    conditional: {
+      questionId: 'demo-relationship-status',
+      values: ['single', 'divorced', 'widowed'], // Показывать только если не в отношениях
+    },
+    order: 51, // Тот же порядок, но показывается условно
   },
   {
     id: 'relationships-friends',
@@ -589,7 +610,9 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
   
   // Отношения
   const relationshipsQuality = Number(answerMap.get('relationships-quality') || 5)
-  const partnerQuality = Number(answerMap.get('relationships-partner') || 0)
+  // Для partnerQuality проверяем оба вопроса (для тех, кто в отношениях и кто не в отношениях)
+  const partnerQualityRaw = answerMap.get('relationships-partner') || answerMap.get('relationships-single-satisfaction') || 0
+  const partnerQuality = Number(partnerQualityRaw)
   const friendsQuality = Number(answerMap.get('relationships-friends') || 5)
   const loneliness = Number(answerMap.get('relationships-loneliness') || 5)
   const conflictFrequency = Number(answerMap.get('relationships-conflict') || 5)

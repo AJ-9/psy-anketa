@@ -2,6 +2,30 @@ import { create } from 'zustand'
 import { Answer, QuestionnaireResponse, AnalysisResult, Question } from '@/types/questionnaire'
 import { questionnaireQuestions, analyzeResponses } from '@/lib/questionnaire'
 
+// Функция для фильтрации вопросов на основе условной логики
+function getFilteredQuestions(answers: Map<string, Answer>): Question[] {
+  return questionnaireQuestions
+    .sort((a, b) => a.order - b.order)
+    .filter((question) => {
+      // Если вопрос имеет условие, проверяем его
+      if (question.conditional) {
+        const dependentAnswer = answers.get(question.conditional.questionId)
+        if (!dependentAnswer) {
+          // Если зависимый вопрос еще не отвечен, не показываем этот вопрос
+          return false
+        }
+        const answerValue = dependentAnswer.value
+        // Проверяем, соответствует ли ответ условию (игнорируем массивы)
+        if (Array.isArray(answerValue)) {
+          return false // Для multiple-choice вопросов не используем условную логику
+        }
+        return question.conditional.values.includes(answerValue as string | number | boolean)
+      }
+      // Если условия нет, показываем вопрос
+      return true
+    })
+}
+
 interface QuestionnaireState {
   currentQuestionIndex: number
   answers: Map<string, Answer>
@@ -34,13 +58,25 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
   consentDate: null,
   
   setAnswer: (questionId, value) => {
-    const answers = new Map(get().answers)
+    const state = get()
+    const answers = new Map(state.answers)
     answers.set(questionId, {
       questionId,
       value,
       timestamp: new Date(),
     })
     set({ answers })
+    
+    // После изменения ответа проверяем, нужно ли перейти к следующему вопросу
+    // если текущий вопрос стал невидимым из-за условной логики
+    const filteredQuestions = getFilteredQuestions(answers)
+    const currentQuestion = filteredQuestions[state.currentQuestionIndex]
+    
+    // Если текущий вопрос больше не виден, переходим к следующему
+    if (!currentQuestion && filteredQuestions.length > 0) {
+      const nextIndex = Math.min(state.currentQuestionIndex, filteredQuestions.length - 1)
+      set({ currentQuestionIndex: nextIndex })
+    }
   },
   
   setPersonalDataConsent: (consent) => {
@@ -52,8 +88,8 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
   
   nextQuestion: () => {
     const state = get()
-    const questions = questionnaireQuestions.sort((a, b) => a.order - b.order)
-    if (state.currentQuestionIndex < questions.length - 1) {
+    const filteredQuestions = getFilteredQuestions(state.answers)
+    if (state.currentQuestionIndex < filteredQuestions.length - 1) {
       set({ currentQuestionIndex: state.currentQuestionIndex + 1 })
     }
   },
@@ -66,8 +102,9 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
   },
   
   goToQuestion: (index) => {
-    const questions = questionnaireQuestions.sort((a, b) => a.order - b.order)
-    if (index >= 0 && index < questions.length) {
+    const state = get()
+    const filteredQuestions = getFilteredQuestions(state.answers)
+    if (index >= 0 && index < filteredQuestions.length) {
       set({ currentQuestionIndex: index })
     }
   },
@@ -122,19 +159,20 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
   
   getCurrentQuestion: () => {
     const state = get()
-    const questions = questionnaireQuestions.sort((a, b) => a.order - b.order)
-    return questions[state.currentQuestionIndex] || null
+    const filteredQuestions = getFilteredQuestions(state.answers)
+    return filteredQuestions[state.currentQuestionIndex] || null
   },
   
   getProgress: () => {
     const state = get()
-    const questions = questionnaireQuestions.sort((a, b) => a.order - b.order)
-    const answeredCount = questions.filter(q => state.answers.has(q.id)).length
-    return Math.round((answeredCount / questions.length) * 100)
+    const filteredQuestions = getFilteredQuestions(state.answers)
+    const answeredCount = filteredQuestions.filter(q => state.answers.has(q.id)).length
+    return Math.round((answeredCount / filteredQuestions.length) * 100)
   },
   
   getAllQuestions: () => {
-    return questionnaireQuestions.sort((a, b) => a.order - b.order)
+    const state = get()
+    return getFilteredQuestions(state.answers)
   },
 }))
 
