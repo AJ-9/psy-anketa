@@ -26,6 +26,8 @@ export interface Question {
   min?: number
   max?: number
   step?: number
+  // Направление шкалы для цветовой кодировки
+  scaleDirection?: 'positive' | 'negative' | 'neutral' // positive = высокое значение хорошо (зеленый), negative = высокое значение плохо (красный), neutral = среднее значение оптимально
   // Категория вопроса (для группировки)
   category: QuestionCategory
   // Порядок отображения

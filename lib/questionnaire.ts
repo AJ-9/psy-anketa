@@ -100,6 +100,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 20,
   },
   {
@@ -112,6 +113,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 21,
   },
   {
@@ -138,6 +140,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'neutral', // Среднее значение (5) оптимально
     order: 23,
   },
   {
@@ -150,6 +153,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 24,
   },
   {
@@ -162,6 +166,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 25,
   },
   {
@@ -174,6 +179,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 26,
   },
   {
@@ -196,6 +202,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 30,
   },
   {
@@ -208,6 +215,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо (нейтрально, но склоняемся к положительному)
     order: 31,
   },
   {
@@ -220,6 +228,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 32,
   },
   {
@@ -232,6 +241,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 33,
   },
   {
@@ -244,6 +254,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 34,
   },
   {
@@ -256,6 +267,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 35,
   },
   {
@@ -268,6 +280,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 36,
   },
   
@@ -298,6 +311,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 42,
   },
   {
@@ -321,6 +335,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 50,
   },
   {
@@ -333,6 +348,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 51,
   },
   {
@@ -345,6 +361,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 52,
   },
   {
@@ -357,6 +374,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 53,
   },
   {
@@ -369,6 +387,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 54,
   },
   
@@ -383,6 +402,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 60,
   },
   {
@@ -395,6 +415,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 61,
   },
   {
@@ -407,6 +428,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 62,
   },
   {
@@ -419,6 +441,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 63,
   },
   {
@@ -431,6 +454,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 64,
   },
   
@@ -466,6 +490,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'positive', // Высокое значение = хорошо
     order: 71,
   },
   
@@ -500,6 +525,7 @@ export const questionnaireQuestions: Question[] = [
     min: 0,
     max: 10,
     step: 1,
+    scaleDirection: 'negative', // Высокое значение = плохо
     order: 81,
   },
   
