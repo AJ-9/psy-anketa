@@ -5,7 +5,7 @@ import { Answer, AnalysisResult } from '@/types/questionnaire'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { answers, analysis, demographics } = body
+    const { answers, analysis, demographics, personalDataConsent, consentDate } = body
 
     const response = await prisma.questionnaireResponse.create({
       data: {
@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
         patientName: demographics?.name,
         patientEmail: demographics?.email,
         notes: demographics?.notes,
+        personalDataConsent: Boolean(personalDataConsent),
+        consentDate: consentDate ? new Date(consentDate) : null,
       },
     })
 

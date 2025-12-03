@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useQuestionnaireStore } from '@/store/questionnaireStore'
@@ -7,9 +8,17 @@ import { useQuestionnaireStore } from '@/store/questionnaireStore'
 export default function Home() {
   const router = useRouter()
   const reset = useQuestionnaireStore(state => state.reset)
+  const setPersonalDataConsent = useQuestionnaireStore(state => state.setPersonalDataConsent)
+  const [consentChecked, setConsentChecked] = useState(false)
+  const [showConsentModal, setShowConsentModal] = useState(false)
 
   const handleStart = () => {
+    if (!consentChecked) {
+      setShowConsentModal(true)
+      return
+    }
     reset()
+    setPersonalDataConsent(true)
     router.push('/questionnaire')
   }
 

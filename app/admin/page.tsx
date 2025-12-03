@@ -16,6 +16,8 @@ interface Response {
   gender?: string
   patientName?: string
   patientEmail?: string
+  personalDataConsent?: boolean
+  consentDate?: string | null
 }
 
 export default function AdminPage() {
@@ -289,6 +291,35 @@ export default function AdminPage() {
                 >
                   ×
                 </button>
+              </div>
+
+              {/* Информация о согласии на обработку персональных данных */}
+              <div className="mb-6 p-4 rounded-lg border-2">
+                <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                  Согласие на обработку персональных данных
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
+                      selectedResponse.personalDataConsent ? 'bg-green-500' : 'bg-red-500'
+                    }`}></span>
+                    <span className="text-gray-700">
+                      {selectedResponse.personalDataConsent 
+                        ? 'Согласие получено' 
+                        : 'Согласие не получено'}
+                    </span>
+                  </div>
+                  {selectedResponse.consentDate && (
+                    <p className="text-sm text-gray-600 ml-5">
+                      Дата: {new Date(selectedResponse.consentDate).toLocaleString('ru-RU')}
+                    </p>
+                  )}
+                  {!selectedResponse.personalDataConsent && (
+                    <p className="text-sm text-red-600 ml-5">
+                      ⚠️ Внимание: Согласие на обработку персональных данных не было получено
+                    </p>
+                  )}
+                </div>
               </div>
 
               {selectedResponse.analysis ? (

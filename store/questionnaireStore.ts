@@ -7,9 +7,12 @@ interface QuestionnaireState {
   answers: Map<string, Answer>
   isCompleted: boolean
   analysis: AnalysisResult | null
+  personalDataConsent: boolean
+  consentDate: Date | null
   
   // Actions
   setAnswer: (questionId: string, value: Answer['value']) => void
+  setPersonalDataConsent: (consent: boolean) => void
   nextQuestion: () => void
   previousQuestion: () => void
   goToQuestion: (index: number) => void
@@ -27,6 +30,8 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
   answers: new Map(),
   isCompleted: false,
   analysis: null,
+  personalDataConsent: false,
+  consentDate: null,
   
   setAnswer: (questionId, value) => {
     const answers = new Map(get().answers)
@@ -36,6 +41,13 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
       timestamp: new Date(),
     })
     set({ answers })
+  },
+  
+  setPersonalDataConsent: (consent) => {
+    set({ 
+      personalDataConsent: consent,
+      consentDate: consent ? new Date() : null
+    })
   },
   
   nextQuestion: () => {
@@ -83,6 +95,8 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
           answers: answersArray,
           analysis,
           demographics,
+          personalDataConsent: state.personalDataConsent,
+          consentDate: state.consentDate?.toISOString() || null,
           startedAt: new Date().toISOString(),
           completedAt: new Date().toISOString(),
         }),
@@ -101,6 +115,8 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
       answers: new Map(),
       isCompleted: false,
       analysis: null,
+      personalDataConsent: false,
+      consentDate: null,
     })
   },
   

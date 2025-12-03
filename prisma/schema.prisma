@@ -35,6 +35,10 @@ model QuestionnaireResponse {
   patientEmail  String?
   notes         String?
   
+  // Согласие на обработку персональных данных
+  personalDataConsent Boolean @default(false)
+  consentDate         DateTime?
+  
   @@index([createdAt])
   @@index([completedAt])
 }
