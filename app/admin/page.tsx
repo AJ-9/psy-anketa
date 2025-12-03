@@ -34,11 +34,22 @@ export default function AdminPage() {
       setLoading(true)
       const completed = filter === 'completed' ? 'true' : filter === 'incomplete' ? 'false' : undefined
       const url = `/api/responses${completed ? `?completed=${completed}` : ''}`
+      console.log('Fetching responses from:', url)
       const res = await fetch(url)
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Failed to fetch responses:', res.status, errorData)
+        alert(`Ошибка при загрузке анкет: ${errorData.error || res.statusText}`)
+        return
+      }
+      
       const data = await res.json()
+      console.log('Fetched responses:', data.responses?.length || 0, 'total:', data.total)
       setResponses(data.responses || [])
     } catch (error) {
       console.error('Error fetching responses:', error)
+      alert(`Ошибка при загрузке анкет: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`)
     } finally {
       setLoading(false)
     }

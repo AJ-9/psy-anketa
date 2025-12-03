@@ -125,7 +125,7 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
         relationshipStatus: String(state.answers.get('demo-relationship-status')?.value || ''),
       }
       
-      await fetch('/api/responses', {
+      const response = await fetch('/api/responses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,9 +138,19 @@ export const useQuestionnaireStore = create<QuestionnaireState>((set, get) => ({
           completedAt: new Date().toISOString(),
         }),
       })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Failed to save response:', response.status, errorData)
+        throw new Error(`Failed to save: ${errorData.error || response.statusText}`)
+      }
+      
+      const result = await response.json()
+      console.log('Response saved successfully:', result)
     } catch (error) {
       console.error('Failed to save response:', error)
-      // Продолжаем даже если сохранение не удалось
+      // Показываем ошибку пользователю, но продолжаем
+      alert(`Ошибка при сохранении анкеты: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}. Результаты все равно доступны.`)
     }
     
     set({ isCompleted: true, analysis })

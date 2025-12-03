@@ -29,6 +29,8 @@ model QuestionnaireResponse {
   
   // Результаты анализа (JSON)
   analysis      String?  // JSON string of AnalysisResult
+  psychologistResult String? // JSON string of PsychologistResult
+  patientResult String? // JSON string of PatientResult
   
   // Метаданные
   patientName   String?
