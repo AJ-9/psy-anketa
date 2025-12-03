@@ -729,7 +729,7 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
   if (openness >= 7) strengths.push('Открытость новому опыту')
   if (copingEffectiveness >= 7) strengths.push('Эффективные стратегии совладания')
   if (positiveCopingCount >= 3) strengths.push('Использование здоровых способов снятия стресса')
-  if (sleepQuality >= 7) strengths.push('Хорошее качество сна')
+  if (sleepScore >= 7) strengths.push('Хорошее качество сна')
   if (concentration >= 7) strengths.push('Хорошая способность к концентрации')
   if (agreeableness >= 7) strengths.push('Доброжелательность и сотрудничество')
   
@@ -746,7 +746,20 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
   }
   
   // Генерируем рекомендации
-  const recommendations = generateRecommendations(psychologicalIndicators, riskFactors, personalityType)
+  const recommendations = generateRecommendations(
+    psychologicalIndicators, 
+    riskFactors, 
+    personalityType,
+    {
+      loneliness,
+      sleepScore,
+      concentration,
+      workBurnout,
+      familyTrauma,
+      negativeCopingCount,
+      positiveCopingCount
+    }
+  )
   
   // Краткое резюме
   const summary = generateSummary(personalityType, psychologicalIndicators, trueRequest, riskFactors)
@@ -803,7 +816,16 @@ function analyzeTrueRequest(text: string, indicators: PsychologicalIndicators): 
 function generateRecommendations(
   indicators: PsychologicalIndicators,
   riskFactors: string[],
-  personalityType: PersonalityType
+  personalityType: PersonalityType,
+  additional: {
+    loneliness: number
+    sleepScore: number
+    concentration: number
+    workBurnout: number
+    familyTrauma: boolean
+    negativeCopingCount: number
+    positiveCopingCount: number
+  }
 ): Recommendation[] {
   const recommendations: Recommendation[] = []
   
@@ -841,18 +863,18 @@ function generateRecommendations(
   }
   
   // Рекомендации по социальной поддержке
-  if (indicators.socialSupport <= 4 || loneliness >= 7) {
+  if (indicators.socialSupport <= 4 || additional.loneliness >= 7) {
     recommendations.push({
       category: 'long-term',
       title: 'Развитие социальных связей',
       description: 'Постепенно расширяйте круг общения, участвуйте в групповых активностях или сообществах по интересам.',
-      priority: loneliness >= 7 ? 'high' : 'medium',
+      priority: additional.loneliness >= 7 ? 'high' : 'medium',
       scientificBasis: 'Социальная поддержка является важным фактором психологического благополучия (исследования показывают связь между одиночеством и депрессией)',
     })
   }
   
   // Рекомендации по сну
-  if (sleepQuality <= 4) {
+  if (additional.sleepScore <= 4) {
     recommendations.push({
       category: 'short-term',
       title: 'Улучшение гигиены сна',
@@ -863,7 +885,7 @@ function generateRecommendations(
   }
   
   // Рекомендации по концентрации
-  if (concentration <= 4) {
+  if (additional.concentration <= 4) {
     recommendations.push({
       category: 'short-term',
       title: 'Улучшение концентрации внимания',
@@ -874,7 +896,7 @@ function generateRecommendations(
   }
   
   // Рекомендации по выгоранию
-  if (workBurnout >= 7) {
+  if (additional.workBurnout >= 7) {
     recommendations.push({
       category: 'immediate',
       title: 'Профилактика профессионального выгорания',
@@ -885,7 +907,7 @@ function generateRecommendations(
   }
   
   // Рекомендации по травме
-  if (familyTrauma) {
+  if (additional.familyTrauma) {
     recommendations.push({
       category: 'professional',
       title: 'Работа с травматическим опытом',
@@ -896,7 +918,7 @@ function generateRecommendations(
   }
   
   // Рекомендации по неадаптивным стратегиям совладания
-  if (negativeCopingCount > positiveCopingCount) {
+  if (additional.negativeCopingCount > additional.positiveCopingCount) {
     recommendations.push({
       category: 'short-term',
       title: 'Развитие здоровых стратегий совладания',
