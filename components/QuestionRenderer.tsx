@@ -31,9 +31,6 @@ export default function QuestionRenderer({ question }: QuestionRendererProps) {
         {question.description && (
           <p className="text-gray-600 text-sm mb-4">{question.description}</p>
         )}
-        {question.required && (
-          <span className="text-red-500 text-sm">* Обязательный вопрос</span>
-        )}
       </div>
 
       <div className="space-y-3">
@@ -98,12 +95,21 @@ export default function QuestionRenderer({ question }: QuestionRendererProps) {
 
         {question.type === 'scale' && (
           <div className="space-y-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>{question.min || 0}</span>
-              <span className="text-lg font-semibold text-gray-900">
-                {currentAnswer !== undefined ? currentAnswer : '—'}
-              </span>
-              <span>{question.max || 10}</span>
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-left">
+                <span className="text-sm font-medium text-gray-700">{question.min || 0}</span>
+                <p className="text-xs text-gray-500">Минимум</p>
+              </div>
+              <div className="text-center">
+                <span className="text-2xl font-bold text-blue-600">
+                  {currentAnswer !== undefined ? currentAnswer : '—'}
+                </span>
+                <p className="text-xs text-gray-500">Текущее значение</p>
+              </div>
+              <div className="text-right">
+                <span className="text-sm font-medium text-gray-700">{question.max || 10}</span>
+                <p className="text-xs text-gray-500">Максимум</p>
+              </div>
             </div>
             <input
               type="range"
@@ -112,11 +118,19 @@ export default function QuestionRenderer({ question }: QuestionRendererProps) {
               step={question.step || 1}
               value={Number(currentAnswer) || question.min || 0}
               onChange={(e) => handleAnswer(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, 
+                  #ef4444 0%, 
+                  #f59e0b ${((question.min || 0) / (question.max || 10)) * 50}%, 
+                  #10b981 ${((question.max || 10) / (question.max || 10)) * 50}%, 
+                  #10b981 100%)`
+              }}
             />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>Минимум</span>
-              <span>Максимум</span>
+            <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <span>Очень низко</span>
+              <span>Средне</span>
+              <span>Очень высоко</span>
             </div>
           </div>
         )}
