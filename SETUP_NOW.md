@@ -30,7 +30,7 @@ git commit -m "Initial commit: PsyAnketa"
 
 # Настройте remote (ЗАМЕНИТЕ YOUR_USERNAME на ваш GitHub username!)
 git remote remove origin 2>/dev/null
-git remote add origin https://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@github.com/YOUR_USERNAME/psy-anketa.git
+git remote add origin https://YOUR_TOKEN@github.com/YOUR_USERNAME/psy-anketa.git
 
 # Переименуйте ветку
 git branch -M main

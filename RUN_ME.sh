@@ -3,7 +3,7 @@
 # Простой скрипт для быстрой настройки GitHub
 # Запустите: bash RUN_ME.sh
 
-TOKEN="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"
+TOKEN="YOUR_GITHUB_TOKEN_HERE"
 REPO_NAME="psy-anketa"
 
 echo "🚀 Настройка GitHub репозитория..."

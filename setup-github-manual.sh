@@ -2,7 +2,7 @@
 
 # Скрипт с ручным вводом username (если автоматическое получение не работает)
 
-TOKEN="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"
+TOKEN="YOUR_GITHUB_TOKEN_HERE"
 REPO_NAME="psy-anketa"
 
 echo "🔧 Настройка GitHub репозитория..."
