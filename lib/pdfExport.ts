@@ -31,12 +31,12 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
   // Резюме
   doc.setFontSize(14)
   doc.setTextColor(0, 0, 0)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('Краткое резюме', margin, yPos)
   yPos += lineHeight
 
   doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('helvetica', 'normal')
   const summaryLines = doc.splitTextToSize(analysis.summary, pageWidth - 2 * margin)
   doc.text(summaryLines, margin, yPos)
   yPos += summaryLines.length * lineHeight + sectionSpacing
@@ -49,7 +49,7 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
 
   // Тип личности
   doc.setFontSize(14)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('Тип личности', margin, yPos)
   yPos += lineHeight
 
@@ -62,12 +62,12 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
   }
 
   doc.setFontSize(11)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text(personalityNames[analysis.personalityType], margin, yPos)
   yPos += lineHeight
 
   doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.text(`Уверенность: ${analysis.personalityTypeConfidence}%`, margin, yPos)
   yPos += lineHeight
 
@@ -89,23 +89,23 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
 
   // Истинный запрос
   doc.setFontSize(14)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('Истинный запрос', margin, yPos)
   yPos += lineHeight
 
   doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.text(analysis.trueRequest, margin, yPos)
   yPos += lineHeight + sectionSpacing
 
   // Психологические индикаторы
   doc.setFontSize(14)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('Психологические индикаторы', margin, yPos)
   yPos += lineHeight
 
   doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('helvetica', 'normal')
   Object.entries(analysis.psychologicalIndicators).forEach(([key, value]) => {
     if (typeof value === 'number') {
       const labels: Record<string, string> = {
@@ -137,13 +137,13 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
   // Факторы риска
   if (analysis.riskFactors.length > 0) {
     doc.setFontSize(14)
-    doc.setFont(undefined, 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.setTextColor(220, 38, 38) // red-600
     doc.text('Факторы риска', margin, yPos)
     yPos += lineHeight
 
     doc.setFontSize(10)
-    doc.setFont(undefined, 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setTextColor(0, 0, 0)
     analysis.riskFactors.forEach(factor => {
       doc.text(`⚠ ${factor}`, margin, yPos)
@@ -155,13 +155,13 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
   // Сильные стороны
   if (analysis.strengths.length > 0) {
     doc.setFontSize(14)
-    doc.setFont(undefined, 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.setTextColor(34, 197, 94) // green-600
     doc.text('Сильные стороны', margin, yPos)
     yPos += lineHeight
 
     doc.setFontSize(10)
-    doc.setFont(undefined, 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setTextColor(0, 0, 0)
     analysis.strengths.forEach(strength => {
       doc.text(`✓ ${strength}`, margin, yPos)
@@ -178,13 +178,13 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
 
   // Рекомендации
   doc.setFontSize(14)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.setTextColor(0, 0, 0)
   doc.text('Рекомендации', margin, yPos)
   yPos += lineHeight
 
   doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('helvetica', 'normal')
   analysis.recommendations.forEach((rec, index) => {
     // Проверка на новую страницу перед каждой рекомендацией
     if (yPos > pageHeight - 30) {
@@ -192,11 +192,11 @@ export function exportToPDF(analysis: AnalysisResult, patientName?: string) {
       yPos = 20
     }
 
-    doc.setFont(undefined, 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.text(`${index + 1}. ${rec.title}`, margin, yPos)
     yPos += lineHeight
 
-    doc.setFont(undefined, 'normal')
+    doc.setFont('helvetica', 'normal')
     const descLines = doc.splitTextToSize(rec.description, pageWidth - 2 * margin)
     doc.text(descLines, margin, yPos)
     yPos += descLines.length * lineHeight

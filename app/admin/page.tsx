@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { exportToPDF } from '@/lib/pdfExport'
@@ -25,11 +25,7 @@ export default function AdminPage() {
   const [filter, setFilter] = useState<'all' | 'completed' | 'incomplete'>('all')
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(null)
 
-  useEffect(() => {
-    fetchResponses()
-  }, [filter])
-
-  const fetchResponses = async () => {
+  const fetchResponses = useCallback(async () => {
     try {
       setLoading(true)
       const completed = filter === 'completed' ? 'true' : filter === 'incomplete' ? 'false' : undefined
@@ -42,7 +38,11 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filter])
+
+  useEffect(() => {
+    fetchResponses()
+  }, [fetchResponses])
 
   const handleExportPDF = (response: Response) => {
     if (response.analysis) {
