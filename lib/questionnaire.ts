@@ -1,4 +1,4 @@
-import { Question, QuestionCategory, Answer, AnalysisResult, PersonalityType, PsychologicalIndicators, Recommendation } from '@/types/questionnaire'
+import { Question, QuestionCategory, Answer, AnalysisResult, PersonalityType, PsychologicalIndicators, Recommendation, PatientResult, PsychologistResult } from '@/types/questionnaire'
 
 // База вопросов анкеты
 export const questionnaireQuestions: Question[] = [
@@ -793,6 +793,63 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
   // Краткое резюме
   const summary = generateSummary(personalityType, psychologicalIndicators, trueRequest, riskFactors)
   
+  // Генерируем два варианта результатов
+  const patientResult = generatePatientResult(
+    personalityType,
+    psychologicalIndicators,
+    dominantTraits,
+    strengths,
+    recommendations,
+    summary
+  )
+  
+  const psychologistResult = generatePsychologistResult(
+    answers,
+    answerMap,
+    personalityType,
+    confidence,
+    dominantTraits,
+    psychologicalIndicators,
+    trueRequest,
+    riskFactors,
+    strengths,
+    recommendations,
+    summary,
+    {
+      anxietyLevel,
+      depressionLevel,
+      overallStress,
+      sleepScore,
+      concentration,
+      fatigue,
+      irritability,
+      socialLevel,
+      emotionalLevel,
+      energyLevel,
+      openness,
+      conscientiousness,
+      agreeableness,
+      neuroticism,
+      relationshipsQuality,
+      partnerQuality,
+      friendsQuality,
+      loneliness,
+      workStress,
+      workSatisfaction,
+      workBurnout,
+      copingStrategies,
+      copingEffectiveness,
+      positiveCopingCount,
+      negativeCopingCount,
+      familyMentalHealth,
+      familySubstanceAbuse,
+      familyTrauma,
+      lifeEvents,
+      lifeEventsStress,
+      presentingComplaint
+    }
+  )
+  
   return {
     personalityType,
     personalityTypeConfidence: confidence,
@@ -803,6 +860,8 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
     strengths,
     recommendations,
     summary,
+    patientResult,
+    psychologistResult,
   }
 }
 
@@ -1020,5 +1079,405 @@ function generateSummary(
   }
   
   return summary
+}
+
+// Генерация упрощенного результата для пациента
+function generatePatientResult(
+  personalityType: PersonalityType,
+  indicators: PsychologicalIndicators,
+  dominantTraits: string[],
+  strengths: string[],
+  recommendations: Recommendation[],
+  summary: string
+): PatientResult {
+  const personalityDescriptions = {
+    melancholic: 'Вы склонны к глубоким переживаниям, аналитическому мышлению и внимательности к деталям. Вы цените качество и глубину в отношениях.',
+    choleric: 'Вы энергичны, решительны и склонны к лидерству. Эмоциональны и активны, предпочитаете действовать, а не размышлять.',
+    sanguine: 'Вы общительны, оптимистичны и легко адаптируетесь к новым ситуациям. Обладаете хорошим чувством юмора и любите общение.',
+    phlegmatic: 'Вы спокойны, уравновешены и надежны. Предпочитаете стабильность и порядок, цените гармонию в отношениях.',
+    mixed: 'У вас сочетаются черты разных типов личности, что делает вас гибким и многогранным человеком.',
+  }
+
+  // Выбираем основные индикаторы для показа пациенту
+  const mainIndicators: Array<{
+    label: string
+    value: number
+    status: 'good' | 'moderate' | 'needs_attention'
+  }> = [
+    {
+      label: 'Уровень тревоги',
+      value: indicators.anxietyLevel,
+      status: indicators.anxietyLevel >= 7 ? 'needs_attention' : indicators.anxietyLevel >= 4 ? 'moderate' : 'good'
+    },
+    {
+      label: 'Уровень стресса',
+      value: indicators.stressLevel as number,
+      status: (indicators.stressLevel as number) >= 7 ? 'needs_attention' : (indicators.stressLevel as number) >= 4 ? 'moderate' : 'good'
+    },
+    {
+      label: 'Самооценка',
+      value: indicators.selfEsteem as number,
+      status: indicators.selfEsteem as number >= 7 ? 'good' : indicators.selfEsteem as number >= 4 ? 'moderate' : 'needs_attention'
+    },
+    {
+      label: 'Качество сна',
+      value: indicators.sleepQuality as number,
+      status: indicators.sleepQuality as number >= 7 ? 'good' : indicators.sleepQuality as number >= 4 ? 'moderate' : 'needs_attention'
+    },
+  ]
+
+  // Упрощенные рекомендации (только основные)
+  const generalRecommendations = recommendations
+    .filter(rec => rec.priority === 'high' || rec.category === 'self-help')
+    .slice(0, 5)
+    .map(rec => rec.title)
+
+  return {
+    personalityType,
+    personalityDescription: personalityDescriptions[personalityType],
+    mainIndicators,
+    keyStrengths: strengths.slice(0, 5),
+    generalRecommendations,
+    summary,
+  }
+}
+
+// Генерация расширенного результата для психолога
+function generatePsychologistResult(
+  answers: Answer[],
+  answerMap: Map<string, any>,
+  personalityType: PersonalityType,
+  confidence: number,
+  dominantTraits: string[],
+  indicators: PsychologicalIndicators,
+  trueRequest: string,
+  riskFactors: string[],
+  strengths: string[],
+  recommendations: Recommendation[],
+  summary: string,
+  context: {
+    anxietyLevel: number
+    depressionLevel: number
+    overallStress: number
+    sleepScore: number
+    concentration: number
+    fatigue: number
+    irritability: number
+    socialLevel: number
+    emotionalLevel: number
+    energyLevel: number
+    openness: number
+    conscientiousness: number
+    agreeableness: number
+    neuroticism: number
+    relationshipsQuality: number
+    partnerQuality: number
+    friendsQuality: number
+    loneliness: number
+    workStress: number
+    workSatisfaction: number
+    workBurnout: number
+    copingStrategies: string[]
+    copingEffectiveness: number
+    positiveCopingCount: number
+    negativeCopingCount: number
+    familyMentalHealth: boolean
+    familySubstanceAbuse: boolean
+    familyTrauma: boolean
+    lifeEvents: string[]
+    lifeEventsStress: number
+    presentingComplaint: string
+  }
+): PsychologistResult {
+  const personalityDescriptions = {
+    melancholic: 'Меланхолический тип характеризуется глубокой чувствительностью, склонностью к рефлексии и аналитическому мышлению. Пациенты этого типа часто имеют высокую эмпатию, но могут быть склонны к перфекционизму и самокритике. В стрессовых ситуациях могут проявлять тревожность и склонность к депрессивным состояниям.',
+    choleric: 'Холерический тип отличается высокой энергией, решительностью и склонностью к лидерству. Пациенты этого типа активны, эмоциональны и могут быть импульсивными. В стрессовых ситуациях могут проявлять агрессию и раздражительность. Требуют структурированного подхода и работы с эмоциональной регуляцией.',
+    sanguine: 'Сангвинический тип характеризуется общительностью, оптимизмом и адаптивностью. Пациенты этого типа легко устанавливают контакты, но могут иметь трудности с концентрацией и завершением задач. В стрессовых ситуациях могут избегать проблем. Требуют работы с фокусом и завершением начатого.',
+    phlegmatic: 'Флегматический тип отличается спокойствием, стабильностью и надежностью. Пациенты этого типа предпочитают рутину и избегают изменений. В стрессовых ситуациях могут проявлять пассивность. Требуют мотивации и работы с инициативностью.',
+    mixed: 'Смешанный тип личности сочетает черты разных темпераментов, что создает более сложный профиль. Требует индивидуального подхода с учетом доминирующих черт.',
+  }
+
+  // Big Five профиль
+  const bigFiveProfile = {
+    openness: context.openness,
+    conscientiousness: context.conscientiousness,
+    extraversion: (context.socialLevel + context.energyLevel) / 2,
+    agreeableness: context.agreeableness,
+    neuroticism: context.neuroticism,
+  }
+
+  // Детальные черты личности с оценками
+  const detailedTraits = dominantTraits.map(trait => {
+    let score = 5
+    if (trait.includes('Открытость')) score = context.openness
+    else if (trait.includes('Организованность')) score = context.conscientiousness
+    else if (trait.includes('Доброжелательность')) score = context.agreeableness
+    else if (trait.includes('Эмоциональная стабильность')) score = 10 - context.neuroticism
+    else if (trait.includes('Чувствительность')) score = context.neuroticism
+    else if (trait.includes('Общительность')) score = context.socialLevel
+    else if (trait.includes('Энергичность')) score = context.energyLevel
+
+    return {
+      trait,
+      score,
+      description: getTraitDescription(trait, score),
+    }
+  })
+
+  // Сильные стороны и вызовы личности
+  const personalityStrengths = strengths.filter(s => 
+    !s.includes('риск') && !s.includes('проблем')
+  )
+  const personalityChallenges = riskFactors.filter(r => 
+    !r.includes('⚠️') && !r.includes('КРИТИЧЕСКИЙ')
+  )
+
+  // Клиническая оценка
+  const getSeverity = (value: number): 'mild' | 'moderate' | 'severe' => {
+    if (value >= 8) return 'severe'
+    if (value >= 5) return 'moderate'
+    return 'mild'
+  }
+
+  const clinicalAssessment = {
+    anxietyLevel: {
+      value: context.anxietyLevel,
+      severity: getSeverity(context.anxietyLevel),
+      notes: context.anxietyLevel >= 7 
+        ? 'Высокий уровень тревоги требует внимания. Возможны панические атаки или генерализованное тревожное расстройство.'
+        : context.anxietyLevel >= 4
+        ? 'Умеренный уровень тревоги. Рекомендуется работа с техниками релаксации и когнитивной реструктуризацией.'
+        : 'Низкий уровень тревоги. В пределах нормы.'
+    },
+    depressionLevel: {
+      value: context.depressionLevel,
+      severity: getSeverity(context.depressionLevel),
+      notes: context.depressionLevel >= 7
+        ? 'Высокий уровень депрессии. Возможна клиническая депрессия. Требуется оценка суицидального риска.'
+        : context.depressionLevel >= 4
+        ? 'Умеренный уровень депрессии. Рекомендуется работа с депрессивными мыслями и поведенческая активация.'
+        : 'Низкий уровень депрессии. В пределах нормы.'
+    },
+    stressLevel: {
+      value: context.overallStress,
+      severity: getSeverity(context.overallStress),
+      notes: context.overallStress >= 7
+        ? 'Высокий уровень стресса. Возможны симптомы выгорания. Требуется работа со стресс-менеджментом.'
+        : context.overallStress >= 4
+        ? 'Умеренный уровень стресса. Рекомендуется работа с техниками совладания.'
+        : 'Низкий уровень стресса. В пределах нормы.'
+    },
+    overallMentalHealth: 
+      (context.anxietyLevel >= 8 || context.depressionLevel >= 8 || riskFactors.some(r => r.includes('КРИТИЧЕСКИЙ'))) ? 'critical' as const
+      : (context.anxietyLevel >= 6 || context.depressionLevel >= 6 || context.overallStress >= 7) ? 'concerning' as const
+      : (context.anxietyLevel >= 4 || context.depressionLevel >= 4 || context.overallStress >= 5) ? 'fair' as const
+      : 'good' as const
+  }
+
+  // Детальные индикаторы с интерпретацией
+  const detailedIndicators = [
+    {
+      name: 'Уровень тревоги',
+      value: indicators.anxietyLevel,
+      interpretation: context.anxietyLevel >= 7 
+        ? 'Высокий уровень тревоги может указывать на тревожное расстройство'
+        : context.anxietyLevel >= 4
+        ? 'Умеренный уровень тревоги, требует внимания'
+        : 'Низкий уровень тревоги, в пределах нормы',
+      clinicalSignificance: 'Тревога может влиять на качество жизни, сон и социальное функционирование. Высокий уровень требует клинической оценки.'
+    },
+    {
+      name: 'Уровень депрессии',
+      value: indicators.depressionLevel,
+      interpretation: context.depressionLevel >= 7
+        ? 'Высокий уровень депрессии, возможна клиническая депрессия'
+        : context.depressionLevel >= 4
+        ? 'Умеренный уровень депрессии'
+        : 'Низкий уровень депрессии',
+      clinicalSignificance: 'Депрессия влияет на мотивацию, сон, аппетит и общее функционирование. Высокий уровень требует немедленного внимания.'
+    },
+    {
+      name: 'Самооценка',
+      value: indicators.selfEsteem as number,
+      interpretation: (indicators.selfEsteem as number) >= 7
+        ? 'Хорошая самооценка'
+        : (indicators.selfEsteem as number) >= 4
+        ? 'Умеренная самооценка'
+        : 'Низкая самооценка',
+      clinicalSignificance: 'Самооценка связана с депрессией, тревогой и качеством отношений. Низкая самооценка требует работы с когнитивными искажениями.'
+    },
+    {
+      name: 'Социальная поддержка',
+      value: indicators.socialSupport as number,
+      interpretation: (indicators.socialSupport as number) >= 7
+        ? 'Хорошая социальная поддержка'
+        : (indicators.socialSupport as number) >= 4
+        ? 'Умеренная социальная поддержка'
+        : 'Низкая социальная поддержка',
+      clinicalSignificance: 'Социальная поддержка является защитным фактором против депрессии и стресса. Низкая поддержка увеличивает риск.'
+    },
+    {
+      name: 'Навыки совладания',
+      value: indicators.copingSkills as number,
+      interpretation: (indicators.copingSkills as number) >= 7
+        ? 'Хорошие навыки совладания'
+        : (indicators.copingSkills as number) >= 4
+        ? 'Умеренные навыки совладания'
+        : 'Слабые навыки совладания',
+      clinicalSignificance: 'Эффективные стратегии совладания защищают от стресса и депрессии. Неадаптивные стратегии могут усугублять проблемы.'
+    },
+  ]
+
+  // Оценка рисков
+  const immediateRisks = riskFactors.filter(r => 
+    r.includes('КРИТИЧЕСКИЙ') || r.includes('суицид') || 
+    context.anxietyLevel >= 9 || context.depressionLevel >= 9
+  )
+  const longTermRisks = riskFactors.filter(r => 
+    r.includes('семейный анамнез') || r.includes('травма') ||
+    r.includes('выгорание') || r.includes('неадаптивных')
+  )
+  const protectiveFactors = strengths.filter(s => 
+    s.includes('отношения') || s.includes('поддержка') || 
+    s.includes('навыки') || s.includes('эффектив')
+  )
+
+  const riskLevel = immediateRisks.length > 0 ? 'critical' as const
+    : (context.anxietyLevel >= 7 || context.depressionLevel >= 7 || riskFactors.length >= 5) ? 'high' as const
+    : (context.anxietyLevel >= 5 || context.depressionLevel >= 5 || riskFactors.length >= 3) ? 'moderate' as const
+    : 'low' as const
+
+  // Механизмы совладания
+  const adaptiveCoping = context.copingStrategies.filter(c => 
+    ['sport', 'hobbies', 'friends', 'meditation', 'therapy', 'reading', 'music'].includes(c)
+  )
+  const maladaptiveCoping = context.copingStrategies.filter(c => 
+    ['alcohol', 'food', 'sleep'].includes(c)
+  )
+
+  // Рекомендации по терапевтическому подходу
+  const recommendedApproach: string[] = []
+  if (context.anxietyLevel >= 6) recommendedApproach.push('Когнитивно-поведенческая терапия (КПТ)')
+  if (context.depressionLevel >= 6) recommendedApproach.push('КПТ', 'Поведенческая активация')
+  if (context.familyTrauma) recommendedApproach.push('EMDR', 'Соматическая терапия травмы')
+  if (context.workBurnout >= 6) recommendedApproach.push('Терапия принятия и ответственности (ACT)')
+  if (context.relationshipsQuality <= 4) recommendedApproach.push('Межличностная терапия (IPT)')
+  if (context.neuroticism >= 7) recommendedApproach.push('Диалектическая поведенческая терапия (ДПТ)')
+  if (recommendedApproach.length === 0) recommendedApproach.push('Интегративный подход', 'КПТ')
+
+  // Фокусные области
+  const focusAreas: string[] = []
+  if (context.anxietyLevel >= 5) focusAreas.push('Работа с тревогой и беспокойством')
+  if (context.depressionLevel >= 5) focusAreas.push('Работа с депрессивными состояниями')
+  if (context.overallStress >= 6) focusAreas.push('Стресс-менеджмент')
+  if (context.relationshipsQuality <= 5) focusAreas.push('Межличностные отношения')
+  if (context.workBurnout >= 6) focusAreas.push('Профессиональное выгорание')
+  if ((indicators.selfEsteem as number) <= 5) focusAreas.push('Самооценка и самопринятие')
+  if (context.loneliness >= 6) focusAreas.push('Социальная изоляция и одиночество')
+
+  // Структура сессий
+  const sessionStructure: string[] = [
+    'Установление терапевтического альянса (первые 2-3 сессии)',
+    'Оценка и формулирование целей терапии',
+    'Работа с основными проблемными областями',
+    'Развитие навыков совладания',
+    'Поддержание прогресса и профилактика рецидивов'
+  ]
+
+  // Вмешательства
+  const interventions = recommendations
+    .filter(rec => rec.category === 'professional' || rec.priority === 'high')
+    .map(rec => ({
+      intervention: rec.title,
+      description: rec.description,
+      timing: rec.category === 'immediate' ? 'immediate' as const
+        : rec.category === 'short-term' ? 'short-term' as const
+        : 'long-term' as const,
+      evidence: rec.scientificBasis || 'Подтверждено исследованиями в области клинической психологии'
+    }))
+
+  // Противопоказания
+  const contraindications: string[] = []
+  if (context.anxietyLevel >= 8) contraindications.push('Избегать чрезмерной экспозиции без подготовки')
+  if (context.depressionLevel >= 8) contraindications.push('Требуется оценка суицидального риска перед глубокой работой')
+  if (context.familyTrauma) contraindications.push('Избегать преждевременной работы с травмой без стабилизации')
+
+  // Прогноз
+  const prognosis = 
+    (context.anxietyLevel <= 4 && context.depressionLevel <= 4 && riskFactors.length <= 2) ? 'good' as const
+    : (context.anxietyLevel <= 6 && context.depressionLevel <= 6 && riskFactors.length <= 4) ? 'moderate' as const
+    : 'guarded' as const
+
+  // Дополнительная информация
+  const familyHistory = [
+    context.familyMentalHealth ? 'Семейный анамнез психических расстройств' : null,
+    context.familySubstanceAbuse ? 'Семейный анамнез зависимости' : null,
+    context.familyTrauma ? 'Травматический опыт в детстве' : null,
+  ].filter(Boolean).join('; ') || 'Не выявлено'
+
+  const medicalHistory = answers
+    .filter(a => a.questionId.startsWith('medical-'))
+    .map(a => {
+      const q = questionnaireQuestions.find(q => q.id === a.questionId)
+      return q ? `${q.text}: ${a.value === true ? 'Да' : 'Нет'}` : null
+    })
+    .filter(Boolean)
+    .join('; ') || 'Не указано'
+
+  return {
+    personalityProfile: {
+      type: personalityType,
+      confidence,
+      detailedDescription: personalityDescriptions[personalityType],
+      bigFiveProfile,
+      dominantTraits: detailedTraits,
+      personalityStrengths,
+      personalityChallenges: personalityChallenges,
+    },
+    psychologicalAnalysis: {
+      clinicalAssessment,
+      detailedIndicators,
+      riskAssessment: {
+        immediateRisks,
+        longTermRisks,
+        protectiveFactors,
+        riskLevel,
+      },
+      copingMechanisms: {
+        adaptive: adaptiveCoping,
+        maladaptive: maladaptiveCoping,
+        effectiveness: context.copingEffectiveness,
+        recommendations: recommendations
+          .filter(r => r.category === 'self-help' && r.title.includes('совлада'))
+          .map(r => r.description),
+      },
+    },
+    therapeuticRecommendations: {
+      recommendedApproach: [...new Set(recommendedApproach)],
+      focusAreas,
+      sessionStructure,
+      interventions,
+      contraindications,
+      prognosis,
+    },
+    additionalNotes: {
+      presentingComplaint: context.presentingComplaint,
+      trueRequest,
+      familyHistory,
+      medicalHistory,
+      lifeEvents: context.lifeEvents.join('; ') || 'Не указано',
+    },
+  }
+}
+
+// Вспомогательная функция для описания черт
+function getTraitDescription(trait: string, score: number): string {
+  if (score >= 7) {
+    return `Высокий уровень ${trait.toLowerCase()}. Это сильная сторона личности.`
+  } else if (score >= 4) {
+    return `Умеренный уровень ${trait.toLowerCase()}. В пределах нормы.`
+  } else {
+    return `Низкий уровень ${trait.toLowerCase()}. Может требовать внимания.`
+  }
 }
 

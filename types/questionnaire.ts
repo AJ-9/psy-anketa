@@ -79,7 +79,7 @@ export interface PsychologicalIndicators {
   [key: string]: number | string
 }
 
-// Результат анализа
+// Результат анализа (базовый)
 export interface AnalysisResult {
   personalityType: PersonalityType
   personalityTypeConfidence: number  // 0-100%
@@ -90,6 +90,99 @@ export interface AnalysisResult {
   strengths: string[]              // Сильные стороны
   recommendations: Recommendation[]
   summary: string                  // Краткое резюме
+  // Два варианта результатов
+  patientResult?: PatientResult    // Упрощенный результат для пациента
+  psychologistResult?: PsychologistResult  // Расширенный результат для психолога
+}
+
+// Упрощенный результат для пациента
+export interface PatientResult {
+  personalityType: PersonalityType
+  personalityDescription: string
+  mainIndicators: {
+    label: string
+    value: number
+    status: 'good' | 'moderate' | 'needs_attention'
+  }[]
+  keyStrengths: string[]
+  generalRecommendations: string[]  // Упрощенные рекомендации
+  summary: string
+}
+
+// Расширенный результат для психолога
+export interface PsychologistResult {
+  // Расширенная характеристика личности
+  personalityProfile: {
+    type: PersonalityType
+    confidence: number
+    detailedDescription: string
+    bigFiveProfile: {
+      openness: number
+      conscientiousness: number
+      extraversion: number
+      agreeableness: number
+      neuroticism: number
+    }
+    dominantTraits: Array<{
+      trait: string
+      score: number
+      description: string
+    }>
+    personalityStrengths: string[]
+    personalityChallenges: string[]
+  }
+  
+  // Глубокий психологический анализ
+  psychologicalAnalysis: {
+    clinicalAssessment: {
+      anxietyLevel: { value: number; severity: 'mild' | 'moderate' | 'severe'; notes: string }
+      depressionLevel: { value: number; severity: 'mild' | 'moderate' | 'severe'; notes: string }
+      stressLevel: { value: number; severity: 'mild' | 'moderate' | 'severe'; notes: string }
+      overallMentalHealth: 'good' | 'fair' | 'concerning' | 'critical'
+    }
+    detailedIndicators: Array<{
+      name: string
+      value: number
+      interpretation: string
+      clinicalSignificance: string
+    }>
+    riskAssessment: {
+      immediateRisks: string[]
+      longTermRisks: string[]
+      protectiveFactors: string[]
+      riskLevel: 'low' | 'moderate' | 'high' | 'critical'
+    }
+    copingMechanisms: {
+      adaptive: string[]
+      maladaptive: string[]
+      effectiveness: number
+      recommendations: string[]
+    }
+  }
+  
+  // Рекомендации для работы психолога
+  therapeuticRecommendations: {
+    recommendedApproach: string[]  // КПТ, ДПТ, гештальт и т.д.
+    focusAreas: string[]
+    sessionStructure: string[]
+    interventions: Array<{
+      intervention: string
+      description: string
+      timing: 'immediate' | 'short-term' | 'long-term'
+      evidence: string
+    }>
+    contraindications: string[]
+    prognosis: 'good' | 'moderate' | 'guarded'
+  }
+  
+  // Дополнительная информация
+  additionalNotes: {
+    presentingComplaint: string
+    trueRequest: string
+    familyHistory: string
+    medicalHistory: string
+    lifeEvents: string
+  }
 }
 
 export interface Recommendation {
