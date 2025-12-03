@@ -131,6 +131,11 @@ export default function ResultsPage() {
                   selfEsteem: 'Самооценка',
                   socialSupport: 'Социальная поддержка',
                   copingSkills: 'Навыки совладания',
+                  sleepQuality: 'Качество сна',
+                  appetite: 'Аппетит',
+                  concentration: 'Концентрация',
+                  fatigue: 'Усталость',
+                  irritability: 'Раздражительность',
                 }
                 return (
                   <div key={key} className="bg-gray-50 rounded-lg p-4">
