@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
 export const metadata: Metadata = {
-  title: 'PsyAnketa - Психологическое анкетирование',
+  title: 'Анкета - Психологическое анкетирование',
   description: 'Онлайн справочник-анкетирование для психолога',
 }
 

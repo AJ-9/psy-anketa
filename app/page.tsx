@@ -37,7 +37,7 @@ export default function Home() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            PsyAnketa
+            Анкета
           </h1>
           <p className="text-xl text-gray-600 mb-2">
             Онлайн справочник-анкетирование для психолога
