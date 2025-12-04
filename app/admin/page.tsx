@@ -176,6 +176,7 @@ export default function AdminPage() {
                 placeholder="Поиск по ФИО пациента..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ color: '#111827', backgroundColor: '#ffffff' }}
                 className="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-all text-gray-900 placeholder:text-gray-400 bg-white"
               />
               <svg

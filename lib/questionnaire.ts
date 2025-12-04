@@ -1,4 +1,4 @@
-import { Question, QuestionCategory, Answer, AnalysisResult, PersonalityType, PsychologicalIndicators, Recommendation, PatientResult, PsychologistResult } from '@/types/questionnaire'
+import { Question, QuestionCategory, Answer, AnalysisResult, PersonalityType, PsychologicalIndicators, Recommendation, PatientResult, PsychologistResult, MBTIType, BigFiveProfile, HollandType } from '@/types/questionnaire'
 
 // База вопросов анкеты
 export const questionnaireQuestions: Question[] = [
@@ -583,11 +583,343 @@ export const questionnaireQuestions: Question[] = [
     category: 'medical-history',
     order: 93,
   },
+  
+  // ========== MBTI (16 типов по Юнгу) ==========
+  // E/I - Экстраверсия/Интроверсия
+  {
+    id: 'mbti-energy-source',
+    type: 'single-choice',
+    text: 'Откуда вы черпаете энергию?',
+    description: 'Как вы восстанавливаете силы и где чувствуете себя комфортнее?',
+    required: true,
+    category: 'mbti',
+    options: [
+      { id: 'extravert', text: 'В общении с людьми, на мероприятиях, в активной деятельности', value: 'E' },
+      { id: 'introvert', text: 'В одиночестве, в тишине, размышляя или занимаясь хобби', value: 'I' },
+    ],
+    order: 100,
+  },
+  {
+    id: 'mbti-social-preference',
+    type: 'scale',
+    text: 'Насколько вам комфортно в больших компаниях?',
+    description: '0 - Предпочитаю одиночество или небольшие группы. 5 - Комфортно и в одиночестве, и в компании. 10 - Люблю большие компании и активное общение.',
+    required: true,
+    category: 'mbti',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 101,
+  },
+  
+  // S/N - Ощущения/Интуиция
+  {
+    id: 'mbti-information-gathering',
+    type: 'single-choice',
+    text: 'Как вы предпочитаете получать информацию?',
+    description: 'Что для вас важнее при принятии решений?',
+    required: true,
+    category: 'mbti',
+    options: [
+      { id: 'sensing', text: 'Конкретные факты, детали, проверенный опыт, то что можно увидеть и потрогать', value: 'S' },
+      { id: 'intuition', text: 'Общие закономерности, возможности, идеи, будущие перспективы', value: 'N' },
+    ],
+    order: 102,
+  },
+  {
+    id: 'mbti-detail-vs-big-picture',
+    type: 'scale',
+    text: 'Что для вас важнее: детали или общая картина?',
+    description: '0 - Очень важно обращать внимание на детали и конкретику. 5 - Важны и детали, и общая картина. 10 - Важна общая картина, идеи и возможности.',
+    required: true,
+    category: 'mbti',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 103,
+  },
+  
+  // T/F - Мышление/Чувства
+  {
+    id: 'mbti-decision-making',
+    type: 'single-choice',
+    text: 'Как вы принимаете решения?',
+    description: 'Что для вас важнее при выборе?',
+    required: true,
+    category: 'mbti',
+    options: [
+      { id: 'thinking', text: 'Логика, объективный анализ, справедливость, принципы', value: 'T' },
+      { id: 'feeling', text: 'Ценности, чувства людей, гармония, личные отношения', value: 'F' },
+    ],
+    order: 104,
+  },
+  {
+    id: 'mbti-logic-vs-values',
+    type: 'scale',
+    text: 'Что важнее при принятии решений: логика или ценности?',
+    description: '0 - Важна объективная логика и справедливость. 5 - Учитываю и логику, и ценности. 10 - Важны ценности, чувства людей и гармония.',
+    required: true,
+    category: 'mbti',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 105,
+  },
+  
+  // J/P - Суждение/Восприятие
+  {
+    id: 'mbti-lifestyle',
+    type: 'single-choice',
+    text: 'Как вы предпочитаете организовывать свою жизнь?',
+    description: 'Что вам ближе?',
+    required: true,
+    category: 'mbti',
+    options: [
+      { id: 'judging', text: 'Планирование, структура, порядок, завершенность дел, четкие сроки', value: 'J' },
+      { id: 'perceiving', text: 'Гибкость, спонтанность, открытость новому, работаю по вдохновению', value: 'P' },
+    ],
+    order: 106,
+  },
+  {
+    id: 'mbti-planning-vs-spontaneity',
+    type: 'scale',
+    text: 'Насколько вы планируете свою жизнь заранее?',
+    description: '0 - Всегда планирую заранее, люблю структуру и порядок. 5 - Планирую важное, но оставляю место для спонтанности. 10 - Предпочитаю гибкость и спонтанность, работаю по ситуации.',
+    required: true,
+    category: 'mbti',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 107,
+  },
+  
+  // ========== Big Five (Пятерка факторов) ==========
+  {
+    id: 'big5-openness',
+    type: 'scale',
+    text: 'Насколько вы открыты новому опыту?',
+    description: '0 - Предпочитаю проверенное и знакомое. 5 - Открыт к новому, но с осторожностью. 10 - Очень люблю экспериментировать, пробовать новое, творческие идеи.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 110,
+  },
+  {
+    id: 'big5-openness-imagination',
+    type: 'scale',
+    text: 'Насколько развито ваше воображение и любовь к искусству?',
+    description: '0 - Практичен, не интересуюсь искусством. 5 - Иногда интересуюсь творчеством. 10 - Очень люблю искусство, творчество, философию, абстрактные идеи.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 111,
+  },
+  
+  {
+    id: 'big5-conscientiousness',
+    type: 'scale',
+    text: 'Насколько вы организованы и дисциплинированы?',
+    description: '0 - Неорганизован, часто откладываю дела. 5 - Средняя организованность. 10 - Очень организован, всегда выполняю обещания, люблю порядок.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'positive',
+    order: 112,
+  },
+  {
+    id: 'big5-conscientiousness-detail',
+    type: 'scale',
+    text: 'Насколько вы внимательны к деталям?',
+    description: '0 - Не обращаю внимания на детали. 5 - Иногда замечаю детали. 10 - Очень внимателен к деталям, тщательно проверяю работу.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'positive',
+    order: 113,
+  },
+  
+  {
+    id: 'big5-extraversion',
+    type: 'scale',
+    text: 'Насколько вы общительны и энергичны?',
+    description: '0 - Тихий, предпочитаю одиночество. 5 - Средняя общительность. 10 - Очень общителен, энергичен, люблю быть в центре внимания.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 114,
+  },
+  {
+    id: 'big5-extraversion-social',
+    type: 'scale',
+    text: 'Насколько вам нравится быть в компании других людей?',
+    description: '0 - Предпочитаю одиночество. 5 - Комфортно и в одиночестве, и в компании. 10 - Очень люблю быть среди людей, заряжаюсь от общения.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 115,
+  },
+  
+  {
+    id: 'big5-agreeableness',
+    type: 'scale',
+    text: 'Насколько вы доверчивы и готовы помогать другим?',
+    description: '0 - Скептичен, не доверяю легко. 5 - Средняя готовность помочь. 10 - Очень доверчив, всегда готов помочь, избегаю конфликтов.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'positive',
+    order: 116,
+  },
+  {
+    id: 'big5-agreeableness-cooperation',
+    type: 'scale',
+    text: 'Насколько вы склонны к сотрудничеству и компромиссам?',
+    description: '0 - Предпочитаю отстаивать свою позицию. 5 - Готов к компромиссам при необходимости. 10 - Очень склонен к сотрудничеству, избегаю конфликтов.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'positive',
+    order: 117,
+  },
+  
+  {
+    id: 'big5-neuroticism',
+    type: 'scale',
+    text: 'Насколько вы эмоционально стабильны?',
+    description: '0 - Очень стабилен, редко переживаю. 5 - Иногда переживаю, но справляюсь. 10 - Часто переживаю, эмоционально нестабилен, склонен к тревоге.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'negative',
+    order: 118,
+  },
+  {
+    id: 'big5-neuroticism-stress',
+    type: 'scale',
+    text: 'Как вы справляетесь со стрессом?',
+    description: '0 - Очень хорошо справляюсь со стрессом. 5 - Иногда стресс влияет на меня. 10 - Плохо справляюсь со стрессом, часто тревожусь.',
+    required: true,
+    category: 'big-five',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'negative',
+    order: 119,
+  },
+  
+  // ========== Типы Холланда (профориентация) ==========
+  {
+    id: 'holland-realistic',
+    type: 'scale',
+    text: 'Насколько вам нравится работать руками, с инструментами, техникой?',
+    description: '0 - Не интересуюсь технической работой. 5 - Иногда интересно. 10 - Очень люблю работать руками, ремонтировать, строить, работать с техникой.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 120,
+  },
+  {
+    id: 'holland-investigative',
+    type: 'scale',
+    text: 'Насколько вам нравится исследовать, анализировать, решать сложные задачи?',
+    description: '0 - Не интересуюсь исследованиями. 5 - Иногда интересно. 10 - Очень люблю исследовать, анализировать данные, решать сложные задачи, науку.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 121,
+  },
+  {
+    id: 'holland-artistic',
+    type: 'scale',
+    text: 'Насколько вам нравится творческая деятельность, искусство, самовыражение?',
+    description: '0 - Не интересуюсь творчеством. 5 - Иногда занимаюсь творчеством. 10 - Очень люблю искусство, творчество, самовыражение, нестандартные решения.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 122,
+  },
+  {
+    id: 'holland-social',
+    type: 'scale',
+    text: 'Насколько вам нравится помогать другим, работать с людьми, обучать?',
+    description: '0 - Не интересуюсь работой с людьми. 5 - Иногда интересно. 10 - Очень люблю помогать людям, обучать, работать в команде, заботиться о других.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 123,
+  },
+  {
+    id: 'holland-enterprising',
+    type: 'scale',
+    text: 'Насколько вам нравится убеждать, продавать, руководить, организовывать?',
+    description: '0 - Не интересуюсь бизнесом и руководством. 5 - Иногда интересно. 10 - Очень люблю убеждать, продавать, руководить людьми, организовывать проекты.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 124,
+  },
+  {
+    id: 'holland-conventional',
+    type: 'scale',
+    text: 'Насколько вам нравится работа с данными, документами, четкая структура?',
+    description: '0 - Не интересуюсь рутинной работой. 5 - Иногда интересно. 10 - Очень люблю работу с данными, документами, четкую структуру, порядок, систематизацию.',
+    required: true,
+    category: 'holland',
+    min: 0,
+    max: 10,
+    step: 1,
+    scaleDirection: 'neutral',
+    order: 125,
+  },
 ]
 
 // Функция анализа ответов с улучшенным алгоритмом
 export function analyzeResponses(answers: Answer[]): AnalysisResult {
   const answerMap = new Map(answers.map(a => [a.questionId, a.value]))
+  
+  // Извлекаем имя пациента
+  const patientName = String(answerMap.get('demo-name') || '').trim() || undefined
   
   // Извлекаем значения симптомов
   const anxietyLevel = Number(answerMap.get('symptoms-anxiety') || 0)
@@ -849,7 +1181,9 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
     dominantTraits,
     strengths,
     recommendations,
-    summary
+    summary,
+    trueRequest,
+    patientName
   )
   
   const psychologistResult = generatePsychologistResult(
@@ -899,6 +1233,15 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
     }
   )
   
+  // Анализ MBTI
+  const mbtiResult = analyzeMBTI(answerMap)
+  
+  // Анализ Big Five
+  const bigFiveResult = analyzeBigFive(answerMap)
+  
+  // Анализ типов Холланда
+  const hollandResult = analyzeHollandTypes(answerMap)
+  
   return {
     personalityType,
     personalityTypeConfidence: confidence,
@@ -909,9 +1252,141 @@ export function analyzeResponses(answers: Answer[]): AnalysisResult {
     strengths,
     recommendations,
     summary,
-    patientResult,
+    mbtiType: mbtiResult.type,
+    mbtiConfidence: mbtiResult.confidence,
+    bigFive: bigFiveResult,
+    hollandTypes: hollandResult,
+    patientResult: {
+      ...patientResult,
+      mbtiType: mbtiResult.type,
+      mbtiDescription: mbtiResult.description,
+      bigFive: bigFiveResult,
+      hollandTypes: hollandResult,
+    },
     psychologistResult,
   }
+}
+
+// Анализ MBTI типа
+function analyzeMBTI(answerMap: Map<string, any>): { type: MBTIType; confidence: number; description: string } {
+  // E/I - Экстраверсия/Интроверсия
+  const energySource = String(answerMap.get('mbti-energy-source') || '')
+  const socialPreference = Number(answerMap.get('mbti-social-preference') || 5)
+  const eScore = energySource === 'E' ? 1 : energySource === 'I' ? -1 : (socialPreference >= 5 ? 0.5 : -0.5)
+  const E = eScore > 0 ? 'E' : 'I'
+  
+  // S/N - Ощущения/Интуиция
+  const infoGathering = String(answerMap.get('mbti-information-gathering') || '')
+  const detailVsBigPicture = Number(answerMap.get('mbti-detail-vs-big-picture') || 5)
+  const sScore = infoGathering === 'S' ? 1 : infoGathering === 'N' ? -1 : (detailVsBigPicture <= 5 ? 0.5 : -0.5)
+  const S = sScore > 0 ? 'S' : 'N'
+  
+  // T/F - Мышление/Чувства
+  const decisionMaking = String(answerMap.get('mbti-decision-making') || '')
+  const logicVsValues = Number(answerMap.get('mbti-logic-vs-values') || 5)
+  const tScore = decisionMaking === 'T' ? 1 : decisionMaking === 'F' ? -1 : (logicVsValues <= 5 ? 0.5 : -0.5)
+  const T = tScore > 0 ? 'T' : 'F'
+  
+  // J/P - Суждение/Восприятие
+  const lifestyle = String(answerMap.get('mbti-lifestyle') || '')
+  const planningVsSpontaneity = Number(answerMap.get('mbti-planning-vs-spontaneity') || 5)
+  const jScore = lifestyle === 'J' ? 1 : lifestyle === 'P' ? -1 : (planningVsSpontaneity <= 5 ? 0.5 : -0.5)
+  const J = jScore > 0 ? 'J' : 'P'
+  
+  const mbtiType = `${E}${S}${T}${J}` as MBTIType
+  
+  // Уверенность на основе согласованности ответов
+  const confidence = Math.min(95, Math.round(
+    (Math.abs(eScore) * 25 + Math.abs(sScore) * 25 + Math.abs(tScore) * 25 + Math.abs(jScore) * 25)
+  ))
+  
+  const descriptions: Record<MBTIType, string> = {
+    INTJ: 'Архитектор - стратегический мыслитель, независимый и решительный',
+    INTP: 'Мыслитель - логичный новатор, любопытный и изобретательный',
+    ENTJ: 'Командир - смелый и решительный лидер, всегда находит способ',
+    ENTP: 'Новатор - умный и любопытный мыслитель, не боится споров',
+    INFJ: 'Активист - творческий и вдохновляющий идеалист, всегда готов помочь',
+    INFP: 'Посредник - поэтический и добрый альтруист, всегда готов помочь',
+    ENFJ: 'Тренер - харизматичный и вдохновляющий лидер, умеет мотивировать',
+    ENFP: 'Борец - энтузиаст, творческий и общительный свободный дух',
+    ISTJ: 'Администратор - практичный и сосредоточенный, надежный и ответственный',
+    ISFJ: 'Защитник - очень преданный и теплый защитник, всегда готов помочь',
+    ESTJ: 'Менеджер - отличный администратор, необычайно способный управлять',
+    ESFJ: 'Консул - необычайно заботливый, общительный и популярный',
+    ISTP: 'Виртуоз - смелый и практичный экспериментатор, мастер всех инструментов',
+    ISFP: 'Художник - гибкий и очаровательный художник, всегда готов исследовать',
+    ESTP: 'Предприниматель - умный, энергичный и очень восприимчивый',
+    ESFP: 'Развлекатель - спонтанный, энергичный и энтузиаст жизни',
+  }
+  
+  return {
+    type: mbtiType,
+    confidence,
+    description: descriptions[mbtiType] || 'Смешанный тип личности',
+  }
+}
+
+// Анализ Big Five профиля
+function analyzeBigFive(answerMap: Map<string, any>): BigFiveProfile {
+  const openness1 = Number(answerMap.get('big5-openness') || 5)
+  const openness2 = Number(answerMap.get('big5-openness-imagination') || 5)
+  const openness = Math.round(((openness1 + openness2) / 2) * 10)
+  
+  const conscientiousness1 = Number(answerMap.get('big5-conscientiousness') || 5)
+  const conscientiousness2 = Number(answerMap.get('big5-conscientiousness-detail') || 5)
+  const conscientiousness = Math.round(((conscientiousness1 + conscientiousness2) / 2) * 10)
+  
+  const extraversion1 = Number(answerMap.get('big5-extraversion') || 5)
+  const extraversion2 = Number(answerMap.get('big5-extraversion-social') || 5)
+  const extraversion = Math.round(((extraversion1 + extraversion2) / 2) * 10)
+  
+  const agreeableness1 = Number(answerMap.get('big5-agreeableness') || 5)
+  const agreeableness2 = Number(answerMap.get('big5-agreeableness-cooperation') || 5)
+  const agreeableness = Math.round(((agreeableness1 + agreeableness2) / 2) * 10)
+  
+  const neuroticism1 = Number(answerMap.get('big5-neuroticism') || 5)
+  const neuroticism2 = Number(answerMap.get('big5-neuroticism-stress') || 5)
+  const neuroticism = Math.round(((neuroticism1 + neuroticism2) / 2) * 10)
+  
+  return {
+    openness: Math.max(0, Math.min(100, openness)),
+    conscientiousness: Math.max(0, Math.min(100, conscientiousness)),
+    extraversion: Math.max(0, Math.min(100, extraversion)),
+    agreeableness: Math.max(0, Math.min(100, agreeableness)),
+    neuroticism: Math.max(0, Math.min(100, neuroticism)),
+  }
+}
+
+// Анализ типов Холланда
+function analyzeHollandTypes(answerMap: Map<string, any>): Array<{ type: HollandType; score: number; description: string }> {
+  const scores = {
+    realistic: Number(answerMap.get('holland-realistic') || 5),
+    investigative: Number(answerMap.get('holland-investigative') || 5),
+    artistic: Number(answerMap.get('holland-artistic') || 5),
+    social: Number(answerMap.get('holland-social') || 5),
+    enterprising: Number(answerMap.get('holland-enterprising') || 5),
+    conventional: Number(answerMap.get('holland-conventional') || 5),
+  }
+  
+  const descriptions: Record<HollandType, string> = {
+    realistic: 'Практическая работа с инструментами, техникой, физическая активность',
+    investigative: 'Исследования, анализ, решение сложных задач, научная деятельность',
+    artistic: 'Творчество, искусство, самовыражение, нестандартные решения',
+    social: 'Работа с людьми, помощь другим, обучение, забота',
+    enterprising: 'Бизнес, руководство, убеждение, организация, продажи',
+    conventional: 'Работа с данными, документами, структура, порядок, систематизация',
+  }
+  
+  const sorted = Object.entries(scores)
+    .map(([type, score]) => ({
+      type: type as HollandType,
+      score,
+      description: descriptions[type as HollandType],
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+  
+  return sorted
 }
 
 // Анализ истинного запроса через ключевые слова и контекст
@@ -1137,7 +1612,9 @@ function generatePatientResult(
   dominantTraits: string[],
   strengths: string[],
   recommendations: Recommendation[],
-  summary: string
+  summary: string,
+  trueRequest: string,
+  patientName?: string
 ): PatientResult {
   const personalityDescriptions = {
     melancholic: 'Вы склонны к глубоким переживаниям, аналитическому мышлению и внимательности к деталям. Вы цените качество и глубину в отношениях.',
@@ -1188,6 +1665,8 @@ function generatePatientResult(
     keyStrengths: strengths.slice(0, 5),
     generalRecommendations,
     summary,
+    trueRequest,
+    patientName,
   }
 }
 

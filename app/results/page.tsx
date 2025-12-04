@@ -65,6 +65,35 @@ export default function ResultsPage() {
             Ваш психологический профиль готов
           </p>
 
+          {/* Что вас ждет */}
+          <div className="bg-blue-50 rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              Что вас ждет:
+            </h2>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">✓</span>
+                <span>Сбор анамнеза и психологического профиля</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">✓</span>
+                <span>Определение доминирующего типа личности</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">✓</span>
+                <span>Выявление истинного запроса пациента</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">✓</span>
+                <span>Анализ психологического состояния</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2">✓</span>
+                <span>Персонализированные рекомендации</span>
+              </li>
+            </ul>
+          </div>
+
           {/* Summary */}
           <div className="bg-blue-50 rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
@@ -73,10 +102,20 @@ export default function ResultsPage() {
             <p className="text-gray-700">{patientResult.summary}</p>
           </div>
 
-          {/* Personality Type */}
+          {/* True Request */}
+          {patientResult.trueRequest && (
+            <div className="bg-purple-50 rounded-lg p-6 mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                Истинный запрос
+              </h2>
+              <p className="text-gray-700">{patientResult.trueRequest}</p>
+            </div>
+          )}
+
+          {/* Personality Type - Темперамент */}
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Тип личности
+              Тип личности (темперамент)
             </h2>
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -87,6 +126,103 @@ export default function ResultsPage() {
               </p>
             </div>
           </div>
+
+          {/* MBTI Type */}
+          {patientResult.mbtiType && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Тип личности по MBTI (16 типов)
+              </h2>
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {patientResult.mbtiType}
+                </h3>
+                <p className="text-gray-700 mb-2">
+                  {patientResult.mbtiDescription}
+                </p>
+                <p className="text-sm text-gray-600">
+                  MBTI (Myers-Briggs Type Indicator) основан на типологии Карла Юнга и описывает 4 дихотомии: 
+                  Экстраверсия/Интроверсия, Ощущения/Интуиция, Мышление/Чувства, Суждение/Восприятие.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Big Five Profile */}
+          {patientResult.bigFive && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Профиль личности Big Five
+              </h2>
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  Big Five (Большая пятерка) - научно обоснованная модель личности, описывающая 5 основных факторов.
+                </p>
+                <div className="space-y-3">
+                  {[
+                    { key: 'openness', label: 'Открытость опыту', color: 'bg-blue-500' },
+                    { key: 'conscientiousness', label: 'Добросовестность', color: 'bg-green-500' },
+                    { key: 'extraversion', label: 'Экстраверсия', color: 'bg-yellow-500' },
+                    { key: 'agreeableness', label: 'Доброжелательность', color: 'bg-purple-500' },
+                    { key: 'neuroticism', label: 'Нейротизм', color: 'bg-red-500' },
+                  ].map(({ key, label, color }) => {
+                    const value = patientResult.bigFive![key as keyof typeof patientResult.bigFive]
+                    return (
+                      <div key={key} className="bg-white rounded-lg p-3">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm font-medium text-gray-700">{label}</span>
+                          <span className="text-sm font-bold text-gray-900">{value}/100</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${color}`}
+                            style={{ width: `${value}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Holland Types */}
+          {patientResult.hollandTypes && patientResult.hollandTypes.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Профориентация (типы Холланда)
+              </h2>
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  Типология Джона Холланда помогает определить подходящие профессии на основе интересов и склонностей.
+                </p>
+                <div className="space-y-3">
+                  {patientResult.hollandTypes.map((holland, index) => {
+                    const typeNames: Record<string, string> = {
+                      realistic: 'Реалистичный (R)',
+                      investigative: 'Исследовательский (I)',
+                      artistic: 'Артистический (A)',
+                      social: 'Социальный (S)',
+                      enterprising: 'Предпринимательский (E)',
+                      conventional: 'Конвенциональный (C)',
+                    }
+                    return (
+                      <div key={index} className="bg-white rounded-lg p-4 border-l-4 border-orange-500">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-gray-900">
+                            {index + 1}. {typeNames[holland.type] || holland.type}
+                          </h4>
+                          <span className="text-sm font-bold text-gray-700">{holland.score}/10</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{holland.description}</p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Main Indicators */}
           <div className="mb-6">

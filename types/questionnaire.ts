@@ -44,7 +44,10 @@ export type QuestionCategory =
   | 'family-history'        // Семейный анамнез
   | 'medical-history'       // Медицинский анамнез
   | 'current-symptoms'     // Текущие симптомы
-  | 'personality-traits'    // Черты личности
+  | 'personality-traits'    // Черты личности (темперамент)
+  | 'mbti'                  // MBTI (16 типов)
+  | 'big-five'              // Big Five
+  | 'holland'               // Типы Холланда (профориентация)
   | 'relationships'         // Отношения
   | 'work-stress'           // Работа и стресс
   | 'life-events'           // Жизненные события
@@ -66,13 +69,38 @@ export interface QuestionnaireResponse {
   analysis?: AnalysisResult
 }
 
-// Типы личности (можно расширить)
+// Типы личности (темпераменты)
 export type PersonalityType = 
   | 'melancholic'      // Меланхолик
   | 'choleric'         // Холерик
   | 'sanguine'         // Сангвиник
   | 'phlegmatic'       // Флегматик
   | 'mixed'            // Смешанный тип
+
+// MBTI типы (16 типов по Юнгу)
+export type MBTIType = 
+  | 'INTJ' | 'INTP' | 'ENTJ' | 'ENTP'  // Аналитики
+  | 'INFJ' | 'INFP' | 'ENFJ' | 'ENFP'  // Дипломаты
+  | 'ISTJ' | 'ISFJ' | 'ESTJ' | 'ESFJ'  // Хранители
+  | 'ISTP' | 'ISFP' | 'ESTP' | 'ESFP'  // Искатели
+
+// Типы Холланда (профориентация)
+export type HollandType = 
+  | 'realistic'      // Реалистичный (R)
+  | 'investigative'  // Исследовательский (I)
+  | 'artistic'       // Артистический (A)
+  | 'social'         // Социальный (S)
+  | 'enterprising'   // Предпринимательский (E)
+  | 'conventional'   // Конвенциональный (C)
+
+// Big Five профиль
+export interface BigFiveProfile {
+  openness: number           // Открытость опыту (0-100)
+  conscientiousness: number  // Добросовестность (0-100)
+  extraversion: number       // Экстраверсия (0-100)
+  agreeableness: number      // Доброжелательность (0-100)
+  neuroticism: number        // Нейротизм (0-100)
+}
 
 // Психологические индикаторы
 export interface PsychologicalIndicators {
@@ -97,6 +125,15 @@ export interface AnalysisResult {
   strengths: string[]              // Сильные стороны
   recommendations: Recommendation[]
   summary: string                  // Краткое резюме
+  // Расширенные типологии
+  mbtiType?: MBTIType              // MBTI тип
+  mbtiConfidence?: number          // Уверенность в MBTI (0-100%)
+  bigFive?: BigFiveProfile         // Big Five профиль
+  hollandTypes?: Array<{           // Типы Холланда (топ 3)
+    type: HollandType
+    score: number
+    description: string
+  }>
   // Два варианта результатов
   patientResult?: PatientResult    // Упрощенный результат для пациента
   psychologistResult?: PsychologistResult  // Расширенный результат для психолога
@@ -114,6 +151,17 @@ export interface PatientResult {
   keyStrengths: string[]
   generalRecommendations: string[]  // Упрощенные рекомендации
   summary: string
+  trueRequest?: string  // Истинный запрос пациента
+  patientName?: string  // Имя пациента для отображения
+  // Расширенные типологии (упрощенные для пациента)
+  mbtiType?: MBTIType
+  mbtiDescription?: string
+  bigFive?: BigFiveProfile
+  hollandTypes?: Array<{
+    type: HollandType
+    score: number
+    description: string
+  }>
 }
 
 // Расширенный результат для психолога
